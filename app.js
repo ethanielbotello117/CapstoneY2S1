@@ -21,9 +21,10 @@ app.use(fileUpload({useTempFiles: true}))
 
 app.use(express.static('./public'))
 
-app.get('/*', (req, res) => {
-    res.send(`<h1>OOPSIE WOOPSIE!! uwU We made a wittle fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!</h1>`)
+app.get('/', (req, res) => {
+    res.send(`<h1>File Upload Starter</h1>`)
 })
+
 app.use("/api/v1/products", productsRouter)
 // app.use("/api/v1/cart", cartRouter)
 
