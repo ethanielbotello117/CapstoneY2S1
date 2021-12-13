@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/api/v1/products", productsRouter)
-// app.use("/api/v1/cart", cartRouter)
+app.use("/api/v1/cart", cartRouter)
 
 app.use(notFoundError)
 app.use(errorHandlerMiddleware)
