@@ -11,6 +11,8 @@ const connectDB = require("./db/connect");
 const productsRouter = require('./routes/productsRouter');
 const cartRouter = require('./routes/cartRouter')
 
+const stripeController = require('./controllers/stripeCon')
+
 const notFoundError = require("./middleware/notFound");
 const errorHandlerMiddleware = require("./middleware/errorHandler");
 
@@ -25,6 +27,7 @@ app.get('/', (req, res) => {
     res.send(`<h1>File Upload Starter</h1>`)
 })
 
+app.post("/stripe", stripeController);
 app.use("/api/v1/products", productsRouter)
 app.use("/api/v1/cart", cartRouter)
 

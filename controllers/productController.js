@@ -38,6 +38,11 @@ const DeleteProduct = async (req, res) => {
   res.status(StatusCodes.OK).json({ product });
 };
 
+const clearProducts = async (req, res) => {
+  const products = await Product.deleteMany({})
+  res.status(200).json({ products })
+}
+
 const getProduct = async (req, res) => {
   const { id: productID } = req.params;
 
@@ -52,4 +57,4 @@ const getProduct = async (req, res) => {
   res.status(StatusCodes.OK).json({ product });
 };
 
-module.exports = { createProduct, getAllProducts, getProduct, DeleteProduct };
+module.exports = { createProduct, getAllProducts, getProduct, DeleteProduct, clearProducts };
