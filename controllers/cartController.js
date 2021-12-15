@@ -3,22 +3,21 @@ const { StatusCodes } = require("http-status-codes");
 
 const createCartProduct = async (req, res) => {
   const productName = req.body.name;
-
   const product = await Cart.findOne({
     name: productName,
   });
 
-  if (!product) {
+  if (product) {
+    await Cart.findOneAndUpdate({name: productName}, {$set:{quantity: product.quantity + 1}}, {new: true});
+  } else {
     const createdProduct = await Cart.create(req.body);
     res.status(200).json({ createdProduct });
-  } else {
-    throw new Error(`Product with name ${product.name} already exists`);
   }
 };
 
 const getAllCartProducts = async (req, res) => {
-  const products = await Cart.find({});
-  res.status(200).json({ products });
+  const cartItems = await Cart.find({});
+  res.status(200).json({ cartItems });
 };
 
 const clearCart = async (req, res) => {
