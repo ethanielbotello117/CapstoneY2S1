@@ -8,7 +8,6 @@ const container = document.querySelector(".container");
 const addCart = async (image, name, price, quantity) => {try {
     const cartItem = { image: image, name: name, price: price, quantity: quantity };
     
-    // console.log(cartItem);
     await axios.post(cartUrl, cartItem);
   } catch (error) {
     console.log(error);

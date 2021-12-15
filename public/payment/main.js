@@ -3,6 +3,8 @@ const url = "/api/v1/cart";
 const container = document.querySelector(".container");
 
 let total = 0;
+let shipping = 0;
+let grossAmount = 0;
 
 const purchase = [
   { id: "1", name: "T-shirt", price: 1999 },
@@ -17,11 +19,12 @@ async function addQuantities() {
     cartItems.map((each) => {
       const quantities = each.quantity
       total = total + (each.price*quantities);
+      shipping = Math.round(total*.1)
+      grossAmount = shipping + total
       // return `<p>Quantity: ${each.quantity}</p>`;
     });
     // console.log(total);
-    container.innerHTML = `<p>Subtotal: ${total}</p>`;
-    container.innerHTML = `<p>Shipping Fee: ${shipping}</p>`;
+    container.innerHTML = `<p>Subtotal: ${total}</p><p>Shipping Fee: ${shipping}</p><p>Total: ${grossAmount}</p>`;
   } catch (error) {
     console.log(error);
   }
@@ -29,7 +32,7 @@ async function addQuantities() {
   console.log(total);
 
   const total_amount = total;
-  const shipping_fee = total;
+  const shipping_fee = shipping;
 
   // var stripe = require("stripe")(process.env.PUBLIC_KEY);
   var stripe = Stripe(
