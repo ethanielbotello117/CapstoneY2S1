@@ -17,29 +17,30 @@ async function addQuantities() {
       data: { cartItems },
     } = await axios.get(url);
     cartItems.map((each) => {
-      const quantities = each.quantity
-      total = total + (each.price*quantities);
-      shipping = Math.round(total*.1)
-      grossAmount = shipping + total
+      const quantities = each.quantity;
+      total = total + each.price * quantities;
+      shipping = Math.round(total * 0.1);
+      grossAmount = shipping + total;
       // return `<p>Quantity: ${each.quantity}</p>`;
     });
+    runStripe();
     // console.log(total);
     container.innerHTML = `<p>Subtotal: ${total}</p><p>Shipping Fee: ${shipping}</p><p>Total: ${grossAmount}</p>`;
   } catch (error) {
     console.log(error);
   }
+}
 
-  console.log(total);
+// var stripe = require("stripe")(process.env.PUBLIC_KEY);
+var stripe = Stripe(
+  "pk_test_51K4A12D9JxpHDPgGo7CBHQX75iWhPpI0kr5dJWq0HFlRAwT0sj2vi0W7lmjLlb0xZS7bI5FCXZssL3BjUXjPJVCJ00GwnqG8zq"
+);
 
+document.querySelector("button").disabled = true;
+function runStripe() {
   const total_amount = total;
   const shipping_fee = shipping;
-
-  // var stripe = require("stripe")(process.env.PUBLIC_KEY);
-  var stripe = Stripe(
-    "pk_test_51K4A12D9JxpHDPgGo7CBHQX75iWhPpI0kr5dJWq0HFlRAwT0sj2vi0W7lmjLlb0xZS7bI5FCXZssL3BjUXjPJVCJ00GwnqG8zq"
-  );
-
-  document.querySelector("button").disabled = true;
+  console.log(grossAmount);
   fetch("/stripe", {
     method: "POST",
     headers: {
@@ -87,58 +88,57 @@ async function addQuantities() {
         payWithCard(stripe, card, data.clientSecret);
       });
     });
-
-  // Calls stripe.confirmCardPayment
-  // if the card requires authentication stripe shows a pop-up model to prompt the user to enter authentication details without leaving the page
-
-  const payWithCard = function (stripe, card, clientSecret) {
-    loading(true);
-    stripe
-      .confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: card,
-        },
-      })
-      .then(function (result) {
-        if (result.error) {
-          showError(result.error.message);
-        } else {
-          orderComplete(result.paymentIntent.id);
-        }
-      });
-  };
-
-  const orderComplete = function (paymentIntentId) {
-    loading(false);
-    document
-      .querySelector(".result-message a")
-      .setAttribute(
-        "href",
-        "https://dashboard.stripe.com/total/payments" + paymentIntentId
-      );
-    document.querySelector("/result-message").classList.remove("hidden");
-    document.querySelector("button").disabled = true;
-  };
-
-  const showError = function (errorMsgText) {
-    loading(false);
-    const errorMsg = document.querySelector("#card-error");
-    error.textContent = errorMsgText;
-    setTimeout(() => {
-      errorMsg.textContent = "";
-    }, 4000);
-  };
-
-  const loading = function (isLoading) {
-    if (isLoading) {
-      document.querySelector("button").disabled = true;
-      document.querySelector("#spinner").classList.remove("hidden");
-      document.querySelector("#button-text").classList.add("hidden");
-    } else {
-      document.querySelector("button").disabled = false;
-      document.querySelector("#spinner").classList.add("hidden");
-      document.querySelector("#button-text").classList.remove("hidden");
-    }
-  };
 }
+// Calls stripe.confirmCardPayment
+// if the card requires authentication stripe shows a pop-up model to prompt the user to enter authentication details without leaving the page
+
+const payWithCard = function (stripe, card, clientSecret) {
+  loading(true);
+  stripe
+    .confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: card,
+      },
+    })
+    .then(function (result) {
+      if (result.error) {
+        showError(result.error.message);
+      } else {
+        orderComplete(result.paymentIntent.id);
+      }
+    });
+};
+
+const orderComplete = function (paymentIntentId) {
+  loading(false);
+  document
+    .querySelector(".result-message a")
+    .setAttribute(
+      "href",
+      "https://dashboard.stripe.com/total/payments" + paymentIntentId
+    );
+  document.querySelector("/result-message").classList.remove("hidden");
+  document.querySelector("button").disabled = true;
+};
+
+const showError = function (errorMsgText) {
+  loading(false);
+  const errorMsg = document.querySelector("#card-error");
+  error.textContent = errorMsgText;
+  setTimeout(() => {
+    errorMsg.textContent = "";
+  }, 4000);
+};
+
+const loading = function (isLoading) {
+  if (isLoading) {
+    document.querySelector("button").disabled = true;
+    document.querySelector("#spinner").classList.remove("hidden");
+    document.querySelector("#button-text").classList.add("hidden");
+  } else {
+    document.querySelector("button").disabled = false;
+    document.querySelector("#spinner").classList.add("hidden");
+    document.querySelector("#button-text").classList.remove("hidden");
+  }
+};
 addQuantities();
