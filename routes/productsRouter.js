@@ -11,7 +11,8 @@ const {
 
 const { uploadProductImage } = require("../controllers/uploadController");
 
-router.route("/").get(getAllProducts).post(createProduct);
+router.route("/").get(getAllProducts)
+router.route("/").post(createProduct);
 router.route("/").delete(clearProducts);
 router.route("/:id").delete(DeleteProduct);
 router.route("/:id").get(getProduct);

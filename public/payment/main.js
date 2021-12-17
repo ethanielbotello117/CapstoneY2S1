@@ -1,6 +1,7 @@
 // require("dotenv").config()
 const url = "/api/v1/cart";
 const container = document.querySelector(".container");
+const payBtn = document.querySelector(".paybtn")
 
 let total = 0;
 let shipping = 0;
@@ -91,22 +92,21 @@ function runStripe() {
 }
 // Calls stripe.confirmCardPayment
 // if the card requires authentication stripe shows a pop-up model to prompt the user to enter authentication details without leaving the page
-
 const payWithCard = function (stripe, card, clientSecret) {
   loading(true);
-  stripe
-    .confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: card,
-      },
-    })
-    .then(function (result) {
-      if (result.error) {
-        showError(result.error.message);
-      } else {
-        orderComplete(result.paymentIntent.id);
-      }
-    });
+    stripe
+      .confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: card,
+        },
+      })
+      .then(function (result) {
+        if (result.error) {
+          showError(result.error.message);
+        } else {
+          orderComplete(result.paymentIntent.id);
+        }
+      });
 };
 
 const orderComplete = function (paymentIntentId) {
